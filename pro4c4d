@@ -1,0 +1,29 @@
+import os
+import numpy as np
+import torch
+
+root_dir = r'D:\datasets\CORE4D_RealV2'
+
+for subdir, dirs, files in os.walk(root_dir):
+    for file in files:
+        if file.endswith('.npz'):
+            file_path = os.path.join(subdir, file)
+            print(f'File: {file_path}')
+            data = np.load(file_path, allow_pickle=True)
+            if file == '0.npz':
+                data = data['results'].item()
+                for key, value in data.items():
+                    if key == 'body_pose':
+                        print(key, value)
+            elif file == 'result.npz':
+
+                if isinstance(data, dict) or hasattr(data, 'files'):
+                    keys = data.files if hasattr(data, 'files') else list(data.keys())
+                    print(f'  Keys: {keys}')
+                    for k in keys:
+                        arr = data[k]
+                        if k == 'body_pose':
+                            print(f'    {k}: {type(arr)}, 0data: {arr[0]}')
+                            #print(f'    {k}: {type(arr)}, shape: {getattr(arr, "shape", None)}')
+                elif isinstance(data, np.ndarray):
+                    print(f'  Shape: {data.shape}')
